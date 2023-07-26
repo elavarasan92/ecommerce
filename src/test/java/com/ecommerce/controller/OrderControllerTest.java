@@ -41,7 +41,6 @@ public class OrderControllerTest {
 	OrderServiceImpl orderService;
 	@Test
 	void getAllOrdersTest() throws Exception {
-
 		given(orderService.getAllOrders())
 				.willReturn(List.of(order));
 		mockMvc.perform(get("/api/v0/orders"))
@@ -50,11 +49,6 @@ public class OrderControllerTest {
 				.andExpect(jsonPath("$[*].orderNumber").value(3));
 		verify(orderService).getAllOrders();
 	}
-/*
-	@PutMapping("/{id}")
-	public ResponseEntity<Orders> update(@RequestBody OrderRequest orderRequest, @PathVariable long id) {
-		return new ResponseEntity<>(orderService.updateOrder(orderRequest, id), HttpStatus.OK);
-	}*/
 	@Test
 	void getOrderByIdTest() throws Exception {
 		given(orderService.getOrderById(1L))
@@ -64,9 +58,6 @@ public class OrderControllerTest {
 				.andExpect(jsonPath("$.orderNumber").value(3));
 		verify(orderService).getOrderById(1L);
 	}
-
-
-
 	@Test
 	void createOrderTest() throws Exception {
 		given(orderService.saveOrder(any(OrderRequest.class))).willReturn(order);
@@ -77,7 +68,6 @@ public class OrderControllerTest {
 				.andExpect(status().isCreated())
 				.andExpect(jsonPath("$.orderNumber").value(3));
 	}
-
 	@Test
 	void updateOrderTest() throws Exception {
 		order.setOrderNumber(4);
@@ -89,7 +79,6 @@ public class OrderControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.orderNumber").value(4));
 	}
-
 	@Test
 	void deleteOrderTest() throws Exception {
 		mockMvc.perform(delete("/api/v0/orders/1"))

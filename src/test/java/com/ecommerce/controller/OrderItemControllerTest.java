@@ -1,12 +1,13 @@
 package com.ecommerce.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.ecommerce.dto.OrderRequest;
-import com.ecommerce.entity.Orders;
-import com.ecommerce.service.OrderServiceImpl;
+import com.ecommerce.dto.OrderItemRequest;
+import com.ecommerce.entity.OrderItem;
+import com.ecommerce.service.OrderItemServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -25,74 +27,75 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = OrderController.class)
+@WebMvcTest(controllers = OrderItemController.class)
 @ExtendWith(SpringExtension.class)
 public class OrderItemControllerTest {
-	private Orders order;
+	private OrderItem orderItem;
 	@PostConstruct
 	private void init() {
-		order = new Orders();
-		order.setId(1L);
-		order.setOrderNumber(3);
+		orderItem = new OrderItem();
+		orderItem.setId(1L);
+		orderItem.setName("Mobile");
+		orderItem.setPrice(BigDecimal.valueOf(12000.00));
 	}
 	@Autowired
 	MockMvc mockMvc;
 	@MockBean
-	OrderServiceImpl orderService;
+	OrderItemServiceImpl orderItemService;
 	@Test
-	void getAllOrdersTest() throws Exception {
-
-		given(orderService.getAllOrders())
-				.willReturn(List.of(order));
-		mockMvc.perform(get("/api/v0/orders"))
+	void getAllOrderItemsTest() throws Exception {
+		given(orderItemService.getAllOrderItems())
+				.willReturn(List.of(orderItem));
+		mockMvc.perform(get("/api/v0/order-item"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
-				.andExpect(jsonPath("$[*].orderNumber").value(3));
-		verify(orderService).getAllOrders();
+				.andExpect(jsonPath("$[*].name").value("Mobile"));
+		verify(orderItemService).getAllOrderItems();
 	}
-/*
-	@PutMapping("/{id}")
-	public ResponseEntity<Orders> update(@RequestBody OrderRequest orderRequest, @PathVariable long id) {
-		return new ResponseEntity<>(orderService.updateOrder(orderRequest, id), HttpStatus.OK);
-	}*/
 	@Test
-	void getOrderByIdTest() throws Exception {
-		given(orderService.getOrderById(1L))
-				.willReturn(order);
-		mockMvc.perform(get("/api/v0/orders/1"))
+	void getOrderItemsByOrderIdTest() throws Exception {
+		given(orderItemService.getOrderItemsByOrderId(1L))
+				.willReturn(List.of(orderItem));
+		mockMvc.perform(get("/api/v0/order-item/order/1"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.orderNumber").value(3));
-		verify(orderService).getOrderById(1L);
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$[*].name").value("Mobile"));
+		verify(orderItemService).getOrderItemsByOrderId(1L);
 	}
 
-
-
 	@Test
-	void createOrderTest() throws Exception {
-		given(orderService.saveOrder(any(OrderRequest.class))).willReturn(order);
+	void getOrderItemByIdTest() throws Exception {
+		given(orderItemService.getOrderItemById(1L))
+				.willReturn(orderItem);
+		mockMvc.perform(get("/api/v0/order-item/1"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.name").value("Mobile"));
+		verify(orderItemService).getOrderItemById(1L);
+	}
+	@Test
+	void createOrderItemForOrderTest() throws Exception {
+		given(orderItemService.saveOrderItemForOrder(anyLong(),any(OrderItemRequest.class))).willReturn(orderItem);
 		mockMvc.perform(MockMvcRequestBuilders
-						.post("/api/v0/orders")
+						.post("/api/v0/order-item/order/1")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{ \"orderNumber\": 3 }"))
+						.content("{ \"name\": \"Mobile\",\"price\": 12000.00 }"))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.orderNumber").value(3));
+				.andExpect(jsonPath("$.name").value("Mobile"));
 	}
-
 	@Test
-	void updateOrderTest() throws Exception {
-		order.setOrderNumber(4);
-		given(orderService.updateOrder(any(OrderRequest.class),any())).willReturn(order);
+	void updateOrderItemTest() throws Exception {
+		orderItem.setName("Camera");
+		given(orderItemService.updateOrderItem(any(OrderItemRequest.class),anyLong())).willReturn(orderItem);
 		mockMvc.perform(MockMvcRequestBuilders
-						.put("/api/v0/orders/3")
+						.put("/api/v0/order-item/3")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("{ \"orderNumber\": 4 }"))
+						.content("{ \"name\": \"Camera\" }"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.orderNumber").value(4));
+				.andExpect(jsonPath("$.name").value("Camera"));
 	}
-
 	@Test
-	void deleteOrderTest() throws Exception {
-		mockMvc.perform(delete("/api/v0/orders/1"))
+	void deleteOrderItemTest() throws Exception {
+		mockMvc.perform(delete("/api/v0/order-item/1"))
 				.andExpect(status().isOk());
 	}
 }

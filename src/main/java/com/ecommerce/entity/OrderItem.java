@@ -27,11 +27,10 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "order_item")
 public class OrderItem {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private BigDecimal price;
-	private boolean deleted;
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "order_id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)

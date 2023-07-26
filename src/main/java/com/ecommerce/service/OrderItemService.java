@@ -13,8 +13,8 @@ public interface OrderItemService {
 	List<OrderItem> getAllOrderItems();
 	List<OrderItem> findByOrder(Orders order);
 	OrderItem getOrderItemById(Long id);
-	OrderItem saveOrderItem(OrderItemRequest orderItemRequest);
 	OrderItem updateOrderItem(OrderItemRequest orderItemRequest,Long id);
 	void deleteOrderItemById(Long id);
 	List<OrderItem> getOrderItemsByOrderId(long orderId) ;
+	OrderItem saveOrderItemForOrder(long orderId, OrderItemRequest orderItemRequest);
 }

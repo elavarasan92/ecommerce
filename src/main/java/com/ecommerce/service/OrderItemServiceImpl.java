@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import com.ecommerce.dto.OrderItemRequest;
 import com.ecommerce.entity.OrderItem;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class OrderItemServiceImpl implements OrderItemService{
 	private final ModelMapper modelMapper;
 	private final OrderItemRepository orderItemRepository;
+	private final OrderService orderService;
 	private final OrderRepository orderRepository;
 
 	@Override
@@ -27,6 +29,16 @@ public class OrderItemServiceImpl implements OrderItemService{
 	public List<OrderItem> getOrderItemsByOrderId(long orderId) {
 		return orderItemRepository.findByOrders(orderRepository.getReferenceById(orderId));
 	}
+
+	@Override
+	public OrderItem saveOrderItemForOrder(long orderId, OrderItemRequest orderItemRequest) {
+		Orders order = orderService.getOrderById(orderId);
+		OrderItem orderItem = modelMapper.map(orderItemRequest,OrderItem.class);
+		orderItem.setOrders(order);
+		orderItemRepository.save(orderItem);
+		return orderItem;
+	}
+
 	@Override
 	public List<OrderItem> findByOrder(Orders order) {
 		return orderItemRepository.findByOrders(order);
@@ -34,17 +46,12 @@ public class OrderItemServiceImpl implements OrderItemService{
 
 	@Override
 	public OrderItem getOrderItemById(Long id) {
-		return getOrder(id);
-	}
-
-	@Override
-	public OrderItem saveOrderItem(OrderItemRequest orderItemRequest) {
-		return orderItemRepository.save(modelMapper.map(orderItemRequest,OrderItem.class));
+		return getOrderItem(id);
 	}
 
 	@Override
 	public OrderItem updateOrderItem(OrderItemRequest orderItemRequest, Long id) {
-		OrderItem destination = getOrder(id);
+		OrderItem destination = getOrderItem(id);
 		modelMapper.map(orderItemRequest,destination);
 		return orderItemRepository.save(destination);
 	}
@@ -54,7 +61,7 @@ public class OrderItemServiceImpl implements OrderItemService{
 		orderItemRepository.deleteById(id);
 	}
 
-	private OrderItem getOrder(Long id) {
+	private OrderItem getOrderItem(Long id) {
 		return orderItemRepository.findById(id).orElseThrow(() -> new NoSuchElementException("No OrderItem exist with ID = " + id));
 	}
 }

@@ -23,10 +23,9 @@ import lombok.Setter;
 @Table(name = "orders")
 public class Orders {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Long orderNumber;
-	private boolean deleted;
 	@OneToMany(mappedBy = "orders", targetEntity = OrderItem.class, fetch = FetchType.LAZY)
 	private Set<OrderItem> orderItems;
 }

@@ -1,0 +1,12 @@
+version: '2.7.14'
+services:
+  db:
+    image: mysql
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: ecommerce
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root

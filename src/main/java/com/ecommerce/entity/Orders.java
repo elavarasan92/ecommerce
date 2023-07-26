@@ -25,7 +25,7 @@ public class Orders {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long orderNumber;
+	private long orderNumber;
 	@OneToMany(mappedBy = "orders", targetEntity = OrderItem.class, fetch = FetchType.LAZY)
 	private Set<OrderItem> orderItems;
 }

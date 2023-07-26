@@ -54,7 +54,7 @@ public class OrderController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Orders> update(@RequestBody OrderRequest orderRequest, @PathVariable long id) {
+	public ResponseEntity<Orders> updateOrder(@RequestBody OrderRequest orderRequest, @PathVariable long id) {
 		return new ResponseEntity<>(orderService.updateOrder(orderRequest, id), HttpStatus.OK);
 	}
 }

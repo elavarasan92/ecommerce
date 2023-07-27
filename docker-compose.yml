@@ -7,6 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ecommerce
+    volumes:
+      - "./schema.sql:/docker-entrypoint-initdb.d/1.sql"
     networks:
       ecommerce-net:
 
